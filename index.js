@@ -30,7 +30,7 @@ run().catch(console.dir);
 
 
 app.get('/', (req, res) => {
-    res.send('Running Server')
+    res.send('Running The Server')
 
 });
 
