@@ -1,14 +1,24 @@
 {
-  "name": "edu-bro-server-side",
+  "name": "Edu-Bro-Server-Site",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "start-dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mehedi-hasan-saikat/Edu-Bro-Server-Site.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mehedi-hasan-saikat/Edu-Bro-Server-Site/issues"
+  },
+  "homepage": "https://github.com/mehedi-hasan-saikat/Edu-Bro-Server-Site#readme",
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",
