@@ -28,7 +28,7 @@ async function run() {
 
 
 
-  // Get api //
+  // Get our api 
   app.get("/allQuestions", async (req, res) => {
     const cursor = allQuestionsCollection.find({});
     const allQuestions = await cursor.toArray();
