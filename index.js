@@ -22,10 +22,16 @@ async function run() {
 
         await client.connect();
         const database = client.db("Edu-Bro");
-        const allQuestionsCollection = database.collection('allQuestions');
-        const reviewCollection = database.collection('review');
-        const userCollection = database.collection('user');
+        const usersCollection = database.collection('users');
+        const allQuestionCollection = database.collection('allQuestions');
 
+
+
+        // add user info
+        app.post("/addUserInfo", async (req, res) => {
+            const result = await usersCollection.insertOne(req.body)
+            res.send(result)
+        })
     }
     finally {
         // await client.close()
