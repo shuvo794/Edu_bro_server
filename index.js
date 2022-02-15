@@ -23,7 +23,6 @@ async function run() {
         await client.connect();
         const database = client.db("Edu-Bro");
         const usersCollection = database.collection('users');
-
         const allQuestionCollection = database.collection('allQuestions');
 
 
@@ -32,6 +31,9 @@ async function run() {
             const result = await usersCollection.insertOne(req.body)
             res.send(result)
         })
+
+
+
     }
     finally {
         // await client.close()
