@@ -28,7 +28,7 @@ async function run() {
 
 
 
-  // Get api
+  // Get our api 
   app.get("/allQuestions", async (req, res) => {
     const cursor = allQuestionsCollection.find({});
     const allQuestions = await cursor.toArray();
@@ -36,7 +36,7 @@ async function run() {
   });
 
 
-    // add user info
+    // add user 
     app.post("/addUserInfo", async (req, res) => {
       const result = await userCollection.insertOne(req.body);
       res.send(result);
