@@ -53,7 +53,7 @@ async function run() {
 run().catch(console.dir);
 
 app.get("/", (req, res) => {
-  res.send("Running The Server");
+  res.send("Running The Edu-Bro Server");
 });
 
 app.listen(port, () => {
