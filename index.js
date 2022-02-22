@@ -28,12 +28,24 @@ async function run() {
 
 
 
-  // Get our api 
-  app.get("/allQuestions", async (req, res) => {
-    const cursor = allQuestionsCollection.find({});
-    const allQuestions = await cursor.toArray();
-    res.send(allQuestions);
-  });
+
+    // POST blogs
+    app.post('/postQuestion', async (req, res) => {
+      const allQuestions = req.body;
+      const result = await allQuestionsCollection.insertOne(allQuestions);
+      res.json(result);
+      console.log(result)
+
+    });
+
+
+
+    // Get all questions api 
+    app.get("/allQuestions", async (req, res) => {
+      const cursor = allQuestionsCollection.find({});
+      const allQuestions = await cursor.toArray();
+      res.send(allQuestions);
+    });
 
 
     // add user 
