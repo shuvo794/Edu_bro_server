@@ -27,8 +27,6 @@ async function run() {
     const booksCollection = database.collection("books");
 
 
-
-
     // POST blogs
     app.post('/postQuestion', async (req, res) => {
       const allQuestions = req.body;
@@ -37,7 +35,6 @@ async function run() {
       console.log(result)
 
     });
-
 
 
     // Get all questions api 
