@@ -39,7 +39,7 @@ async function run() {
 
     // Get all questions api 
     app.get("/allQuestions", async (req, res) => {
-      const cursor = allQuestionsCollection.find({});
+      const cursor = booksCollection.find({});
       const allQuestions = await cursor.toArray();
       res.send(allQuestions);
     });
@@ -50,6 +50,24 @@ async function run() {
       const result = await userCollection.insertOne(req.body);
       res.send(result);
     });
+
+    //Books 
+
+
+    app.get("/allBooks", async (req, res) => {
+      const cursor = booksCollection.find({});
+      const allBooks = await cursor.toArray();
+      res.send(allBooks);
+    });
+
+    app.post('/addBook', async (req, res) => {
+      const allBooks = req.body;
+      const result = await booksCollection.insertOne(allBooks);
+      res.json(result);
+      console.log(result)
+
+    });
+
 
 
 
