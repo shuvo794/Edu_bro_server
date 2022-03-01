@@ -49,6 +49,7 @@ async function run() {
     app.post("/addUserInfo", async (req, res) => {
       const result = await userCollection.insertOne(req.body);
       res.send(result);
+      console.log(result)
     });
 
   } finally {
