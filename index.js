@@ -27,22 +27,29 @@ async function run() {
     const booksCollection = database.collection("books");
 
 
+    // POST blogs
+    app.post('/postQuestion', async (req, res) => {
+      const allQuestions = req.body;
+      const result = await allQuestionsCollection.insertOne(allQuestions);
+      res.json(result);
+      console.log(result)
 
-  // Get api
-  app.get("/allQuestions", async (req, res) => {
-    const cursor = allQuestionsCollection.find({});
-    const allQuestions = await cursor.toArray();
-    res.send(allQuestions);
-  });
+    });
 
 
-    // Add user info
+    // Get all questions api 
+    app.get("/allQuestions", async (req, res) => {
+      const cursor = allQuestionsCollection.find({});
+      const allQuestions = await cursor.toArray();
+      res.send(allQuestions);
+    });
+
+
+    // Add user Info
     app.post("/addUserInfo", async (req, res) => {
       const result = await userCollection.insertOne(req.body);
       res.send(result);
     });
-
-
 
   } finally {
     // await client.close()
