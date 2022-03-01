@@ -24,6 +24,7 @@ async function run() {
     const allQuestionsCollection = database.collection("allQuestions");
     const allBooksCollection = database.collection("allBooks");
     const allBlogsCollection = database.collection("allBlogs");
+    const allNotesCollection = database.collection("allNotes");
     const userCollection = database.collection("user");
 
 
@@ -79,6 +80,24 @@ async function run() {
         const cursor = allBlogsCollection.find({});
         const allBlogs = await cursor.toArray();
         res.send(allBlogs);
+      });
+  
+
+        
+   // POST notes
+   app.post('/postNotes', async (req, res) => {
+    const allNotes = req.body;
+    const result = await allNotesCollection.insertOne(allNotes);
+    res.json(result);
+    console.log(result)
+
+  });
+
+      // Get all notes api 
+      app.get("/allNotes", async (req, res) => {
+        const cursor = allNotesCollection.find({});
+        const allNotes = await cursor.toArray();
+        res.send(allNotes);
       });
   
 
