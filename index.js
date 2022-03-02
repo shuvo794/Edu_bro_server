@@ -12,7 +12,7 @@ app.use(express.json());
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.24hkl.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 
-// console.log('mogno  :',uri);
+// console.log('mogno:',uri);
 const client = new MongoClient(uri, {
   // @ts-ignore
   useNewUrlParser: true,
@@ -105,7 +105,7 @@ async function run() {
   
 
 
-    // add user 
+    // Add user Info
     app.post("/addUserInfo", async (req, res) => {
       const result = await userCollection.insertOne(req.body);
       res.send(result);
