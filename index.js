@@ -9,10 +9,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.24hkl.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 
 // console.log('mogno  :',uri);
 const client = new MongoClient(uri, {
+  // @ts-ignore
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
@@ -37,7 +39,7 @@ async function run() {
       console.log(result)
 
     });
-
+        // EDU BRO 
 
     // Get all questions api 
     app.get("/allQuestions", async (req, res) => {
@@ -46,7 +48,7 @@ async function run() {
       res.send(allQuestions);
     });
 
-
+ // EDU BRO 
 
     // POST Books
     app.post('/postBooks', async (req, res) => {
@@ -118,7 +120,7 @@ async function run() {
 run().catch(console.dir);
 
 app.get("/", (req, res) => {
-  res.send("Running The Server");
+  res.send("Running The Edu-Bro Server");
 });
 
 app.listen(port, () => {
