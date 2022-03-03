@@ -164,6 +164,30 @@ async function run() {
       res.json(user)
     })
 
+
+
+    //MAKE ADMIN
+    app.put('/users/admin', async(req, res)=>{
+      const user = req.body;
+      const filter = {email : user.email};
+      const updateDoc = {$set:{role : 'admin'}};
+      const result = await userCollection.updateOne(filter, updateDoc)
+      res.json(result)
+    })
+
+    //ADMIN CONDITIONALLY RENDERED
+    app.get('/users/:email', async(req, res) =>{
+          const email = req.params.email;
+          const query = {email: email};
+          const user = await userCollection.findOne(query)
+          let isAdmin = false;
+          if(user?.role === 'admin'){
+              isAdmin = true;
+          }
+          res.json({admin: isAdmin});
+    })
+
+
   } finally {
     // await client.close()
   }
