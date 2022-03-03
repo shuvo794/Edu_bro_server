@@ -90,6 +90,7 @@ async function run() {
     const result = await allNotesCollection.insertOne(allNotes);
     res.json(result);
     console.log(result)
+    
 
   });
 
