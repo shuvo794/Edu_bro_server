@@ -28,6 +28,7 @@ async function run() {
     const userCollection = database.collection("user");
 
 
+    // All Questions 
 
     // POST Question
     app.post('/postQuestion', async (req, res) => {
@@ -38,15 +39,22 @@ async function run() {
 
     });
 
-
     // Get all questions api 
     app.get("/allQuestions", async (req, res) => {
       const cursor = allQuestionsCollection.find({});
       const allQuestions = await cursor.toArray();
       res.send(allQuestions);
     });
+    // get single questions
+    app.get('/question/:id', async (req, res) => {
+      const id = req.params.id;
+      const result = await allQuestionsCollection.findOne({ _id: ObjectId(id) })
+      res.json(result)
+    })
 
 
+
+    // all books 
 
     // POST Books
     app.post('/postBooks', async (req, res) => {
@@ -57,50 +65,61 @@ async function run() {
 
     });
 
-        // Get all books api 
-        app.get("/allBooks", async (req, res) => {
-          const cursor = allBooksCollection.find({});
-          const allBooks = await cursor.toArray();
-          res.send(allBooks);
-        });
-    
-    
-        
-   // POST blogs
-   app.post('/postBlogs', async (req, res) => {
-    const allBlogs = req.body;
-    const result = await allBlogsCollection.insertOne(allBlogs);
-    res.json(result);
-    console.log(result)
+    // Get all books api 
+    app.get("/allBooks", async (req, res) => {
+      const cursor = allBooksCollection.find({});
+      const allBooks = await cursor.toArray();
+      res.send(allBooks);
+    });
 
-  });
 
-      // Get all blogs api 
-      app.get("/allBlogs", async (req, res) => {
-        const cursor = allBlogsCollection.find({});
-        const allBlogs = await cursor.toArray();
-        res.send(allBlogs);
-      });
-  
 
-        
-   // POST notes
-   app.post('/postNotes', async (req, res) => {
-    const allNotes = req.body;
-    const result = await allNotesCollection.insertOne(allNotes);
-    res.json(result);
-    console.log(result)
+    // all blogs 
 
-  });
+    // POST blogs
+    app.post('/postBlogs', async (req, res) => {
+      const allBlogs = req.body;
+      const result = await allBlogsCollection.insertOne(allBlogs);
+      res.json(result);
+      console.log(result)
 
-      // Get all notes api 
-      app.get("/allNotes", async (req, res) => {
-        const cursor = allNotesCollection.find({});
-        const allNotes = await cursor.toArray();
-        res.send(allNotes);
-      });
-  
+    });
 
+    // Get all blogs api 
+    app.get("/allBlogs", async (req, res) => {
+      const cursor = allBlogsCollection.find({});
+      const allBlogs = await cursor.toArray();
+      res.send(allBlogs);
+    });
+    // get single blog
+    app.get('/blog-details/:id', async (req, res) => {
+      const id = req.params.id;
+      const result = await allBlogsCollection.findOne({ _id: ObjectId(id) })
+      res.json(result)
+    })
+
+
+
+    // All notes 
+
+    // POST notes
+    app.post('/postNotes', async (req, res) => {
+      const allNotes = req.body;
+      const result = await allNotesCollection.insertOne(allNotes);
+      res.json(result);
+      console.log(result)
+
+    });
+
+    // Get all notes api 
+    app.get("/allNotes", async (req, res) => {
+      const cursor = allNotesCollection.find({});
+      const allNotes = await cursor.toArray();
+      res.send(allNotes);
+    });
+
+
+    // User Info 
 
     // add user 
     app.post("/users", async (req, res) => {
@@ -108,6 +127,37 @@ async function run() {
       res.send(result);
       console.log(result)
     });
+    // upsert for google login 
+    app.put('/users', async (req, res) => {
+      const user = req.body;
+      const filter = { email: user.email }
+      const options = { upsert: true }
+      const updatDoc = { $set: user }
+      const result = await userCollection.updateOne(filter, updatDoc, options)
+      res.json(result)
+    })
+
+    // update user
+    app.put('/updateUser', async (req, res) => {
+      const user = req.body;
+      const filter = { email: user.email }
+      const updateDoc = {
+        $set: {
+          department: user.department,
+          university: user.university
+        }
+      }
+      const result = await userCollection.updateOne(filter, updateDoc)
+      res.json(result)
+    })
+
+    // get single user
+    app.get('/users/:email', async (req, res) => {
+      const email = req.params.email
+      const query = { email: email }
+      const user = await userCollection.findOne(query)
+      res.json(user)
+    })
 
   } finally {
     // await client.close()
