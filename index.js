@@ -9,10 +9,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.24hkl.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 
-// console.log('mogno  :',uri);
+// console.log('mogno:',uri);
 const client = new MongoClient(uri, {
+  // @ts-ignore
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
@@ -48,13 +50,14 @@ async function run() {
     // get single questions
     app.get('/question/:id', async (req, res) => {
       const id = req.params.id;
+      // @ts-ignore
       const result = await allQuestionsCollection.findOne({ _id: ObjectId(id) })
       res.json(result)
     })
 
 
 
-    // all books 
+    
 
     // POST Books
     app.post('/postBooks', async (req, res) => {
@@ -74,7 +77,7 @@ async function run() {
 
 
 
-    // all blogs 
+    
 
     // POST blogs
     app.post('/postBlogs', async (req, res) => {
@@ -94,6 +97,7 @@ async function run() {
     // get single blog
     app.get('/blog-details/:id', async (req, res) => {
       const id = req.params.id;
+      // @ts-ignore
       const result = await allBlogsCollection.findOne({ _id: ObjectId(id) })
       res.json(result)
     })
@@ -121,6 +125,7 @@ async function run() {
 
     // User Info 
 
+  
     // add user 
     app.post("/users", async (req, res) => {
       const result = await userCollection.insertOne(req.body);
@@ -167,7 +172,7 @@ async function run() {
 run().catch(console.dir);
 
 app.get("/", (req, res) => {
-  res.send("Running The Server");
+  res.send("Running The Edu-Bro Server");
 });
 
 app.listen(port, () => {
