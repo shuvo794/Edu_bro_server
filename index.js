@@ -28,9 +28,58 @@ async function run() {
     const allBlogsCollection = database.collection("allBlogs");
     const allNotesCollection = database.collection("allNotes");
     const userCollection = database.collection("user");
+    const questionSolveCollection = database.collection("questionSolve");
+    const BlogCommentCollection = database.collection("BlogComment");
 
 
-    // All Questions 
+
+  //       // get question  solve
+
+  //       app.get('/getBlogComment/${id}', async (req, res) => {
+  //         const result = await BlogCommentCollection.find({ blogId: req.params.id }).toArray()
+  //         res.send(result)
+  //     })
+
+
+
+
+
+
+  //  // post blog comment 
+  //  app.post('/PostBlogComment', async (req, res) => {
+  //   const BlogComment = req.body;
+  //   const result = await BlogCommentCollection.insertOne(BlogComment);
+  //   res.json(result);
+  //   console.log(result)
+
+  // });
+
+
+
+
+
+
+
+
+   // POST solve
+   app.post('/addQuestionSolve', async (req, res) => {
+    const questionSolve = req.body;
+    const result = await questionSolveCollection.insertOne(questionSolve);
+    res.json(result);
+    console.log(result)
+
+  });
+
+
+
+        // get question  solve
+
+        app.get('/questionSolve/${id}', async (req, res) => {
+          const result = await questionSolveCollection.find({ questionId: req.params.id }).toArray()
+          res.send(result)
+      })
+
+
 
     // POST Question
     app.post('/postQuestion', async (req, res) => {
