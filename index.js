@@ -22,12 +22,14 @@ async function run() {
     await client.connect();
     const database = client.db("Edu-Bro");
     const allQuestionsCollection = database.collection("allQuestions");
-    const reviewCollection = database.collection("review");
+    const allBooksCollection = database.collection("allBooks");
+    const allBlogsCollection = database.collection("allBlogs");
+    const allNotesCollection = database.collection("allNotes");
     const userCollection = database.collection("user");
-    const booksCollection = database.collection("books");
 
 
-    // POST blogs
+
+    // POST Question
     app.post('/postQuestion', async (req, res) => {
       const allQuestions = req.body;
       const result = await allQuestionsCollection.insertOne(allQuestions);
@@ -45,13 +47,67 @@ async function run() {
     });
 
 
+
+    // POST Books
+    app.post('/postBooks', async (req, res) => {
+      const allBooks = req.body;
+      const result = await allBooksCollection.insertOne(allBooks);
+      res.json(result);
+      console.log(result)
+
+    });
+
+        // Get all books api 
+        app.get("/allBooks", async (req, res) => {
+          const cursor = allBooksCollection.find({});
+          const allBooks = await cursor.toArray();
+          res.send(allBooks);
+        });
+    
+    
+        
+   // POST blogs
+   app.post('/postBlogs', async (req, res) => {
+    const allBlogs = req.body;
+    const result = await allBlogsCollection.insertOne(allBlogs);
+    res.json(result);
+    console.log(result)
+
+  });
+
+      // Get all blogs api 
+      app.get("/allBlogs", async (req, res) => {
+        const cursor = allBlogsCollection.find({});
+        const allBlogs = await cursor.toArray();
+        res.send(allBlogs);
+      });
+  
+
+        
+   // POST notes
+   app.post('/postNotes', async (req, res) => {
+    const allNotes = req.body;
+    const result = await allNotesCollection.insertOne(allNotes);
+    res.json(result);
+    console.log(result)
+
+  });
+
+      // Get all notes api 
+      app.get("/allNotes", async (req, res) => {
+        const cursor = allNotesCollection.find({});
+        const allNotes = await cursor.toArray();
+        res.send(allNotes);
+      });
+  
+
+
     // add user 
     app.post("/users", async (req, res) => {
       const result = await userCollection.insertOne(req.body);
       res.send(result);
+      console.log(result)
     });
-
-
 
   } finally {
     // await client.close()
