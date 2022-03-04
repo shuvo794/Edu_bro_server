@@ -28,9 +28,56 @@ async function run() {
     const allBlogsCollection = database.collection("allBlogs");
     const allNotesCollection = database.collection("allNotes");
     const userCollection = database.collection("user");
+    const questionSolveCollection = database.collection("questionSolve");
+    const BlogCommentCollection = database.collection("BlogComment");
 
 
-    // All Questions 
+
+        // get question  solve
+
+        app.get('/getBlogComment', async (req, res) => {
+
+          const result = await BlogCommentCollection.find({}).toArray()
+          res.send(result)
+      })
+
+
+
+   // post blog comment 
+   app.post('/PostBlogComment', async (req, res) => {
+    const BlogComment = req.body;
+    const result = await BlogCommentCollection.insertOne(BlogComment);
+    res.json(result);
+    console.log(result)
+
+  });
+
+
+
+
+
+
+
+
+   // POST solve
+   app.post('/addQuestionSolve', async (req, res) => {
+    const questionSolve = req.body;
+    const result = await questionSolveCollection.insertOne(questionSolve);
+    res.json(result);
+    console.log(result)
+
+  });
+
+
+
+        // get question  solve
+
+        app.get('/questionSolve/${id}', async (req, res) => {
+          const result = await questionSolveCollection.find({ questionId: req.params.id }).toArray()
+          res.send(result)
+      })
+
+
 
     // POST Question
     app.post('/postQuestion', async (req, res) => {
@@ -47,6 +94,8 @@ async function run() {
       const allQuestions = await cursor.toArray();
       res.send(allQuestions);
     });
+
+
     // get single questions
     app.get('/question/:id', async (req, res) => {
       const id = req.params.id;
@@ -57,8 +106,6 @@ async function run() {
 
 
 
-    
-
     // POST Books
     app.post('/postBooks', async (req, res) => {
       const allBooks = req.body;
@@ -68,6 +115,7 @@ async function run() {
 
     });
 
+
     // Get all books api 
     app.get("/allBooks", async (req, res) => {
       const cursor = allBooksCollection.find({});
@@ -75,9 +123,6 @@ async function run() {
       res.send(allBooks);
     });
 
-
-
-    
 
     // POST blogs
     app.post('/postBlogs', async (req, res) => {
@@ -88,12 +133,14 @@ async function run() {
 
     });
 
+
     // Get all blogs api 
     app.get("/allBlogs", async (req, res) => {
       const cursor = allBlogsCollection.find({});
       const allBlogs = await cursor.toArray();
       res.send(allBlogs);
     });
+
     // get single blog
     app.get('/blog-details/:id', async (req, res) => {
       const id = req.params.id;
@@ -103,8 +150,6 @@ async function run() {
     })
 
 
-
-    // All notes 
 
     // POST notes
     app.post('/postNotes', async (req, res) => {
@@ -123,24 +168,24 @@ async function run() {
     });
 
 
-    // User Info 
 
-  
     // add user 
     app.post("/users", async (req, res) => {
       const result = await userCollection.insertOne(req.body);
       res.send(result);
       console.log(result)
     });
+
     // upsert for google login 
     app.put('/users', async (req, res) => {
       const user = req.body;
       const filter = { email: user.email }
       const options = { upsert: true }
-      const updatDoc = { $set: user }
-      const result = await userCollection.updateOne(filter, updatDoc, options)
+      const updateDoc = { $set: user }
+      const result = await userCollection.updateOne(filter, updateDoc, options)
       res.json(result)
     })
+
 
     // update user
     app.put('/updateUser', async (req, res) => {
@@ -166,6 +211,37 @@ async function run() {
 
 
 
+
+ // // get my note
+
+    app.get('/myQuestions/:email', async (req, res) => {
+    const result = await allQuestionsCollection.find({ email: req.params.email }).toArray()
+    res.send(result)
+          })
+
+          
+ // // get my note
+
+    app.get('/myNotes/:email', async (req, res) => {
+    const result = await allNotesCollection.find({ email: req.params.email }).toArray()
+    res.send(result)
+          })
+
+
+ // // get my Books
+
+    app.get('/myBooks/:email', async (req, res) => {
+    const result = await allBooksCollection.find({ email: req.params.email }).toArray()
+    res.send(result)
+          })
+
+
+ // // get my blogs
+
+    app.get('/myBlogs/:email', async (req, res) => {
+    const result = await allBlogsCollection.find({ email: req.params.email }).toArray()
+    res.send(result)
+          })
     //MAKE ADMIN
     app.put('/users/admin', async(req, res)=>{
       const user = req.body;
