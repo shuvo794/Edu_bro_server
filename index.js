@@ -33,26 +33,24 @@ async function run() {
 
 
 
-  //       // get question  solve
+        // get question  solve
 
-  //       app.get('/getBlogComment/${id}', async (req, res) => {
-  //         const result = await BlogCommentCollection.find({ blogId: req.params.id }).toArray()
-  //         res.send(result)
-  //     })
+        app.get('/getBlogComment', async (req, res) => {
 
-
-
+          const result = await BlogCommentCollection.find({}).toArray()
+          res.send(result)
+      })
 
 
 
-  //  // post blog comment 
-  //  app.post('/PostBlogComment', async (req, res) => {
-  //   const BlogComment = req.body;
-  //   const result = await BlogCommentCollection.insertOne(BlogComment);
-  //   res.json(result);
-  //   console.log(result)
+   // post blog comment 
+   app.post('/PostBlogComment', async (req, res) => {
+    const BlogComment = req.body;
+    const result = await BlogCommentCollection.insertOne(BlogComment);
+    res.json(result);
+    console.log(result)
 
-  // });
+  });
 
 
 
