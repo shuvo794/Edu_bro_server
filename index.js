@@ -124,6 +124,23 @@ async function run() {
     });
 
 
+    // blog update status 
+    
+    app.put("/BookStatusUpdate/:id", async (req, res) => {
+
+      const filter = { _id: ObjectId(req.params.id) };
+
+      const result = await allBooksCollection.updateOne(filter, {
+          $set: {
+              status: req.body.status,
+          },
+      });
+      res.send(result);
+  });
+
+
+
+
     // POST blogs
     app.post('/postBlogs', async (req, res) => {
       const allBlogs = req.body;
@@ -141,6 +158,8 @@ async function run() {
       res.send(allBlogs);
     });
 
+
+
     // get single blog
     app.get('/blog-details/:id', async (req, res) => {
       const id = req.params.id;
@@ -149,6 +168,25 @@ async function run() {
       res.json(result)
     })
 
+
+
+    // blog update status 
+    
+    app.put("/BlogStatusUpdate/:id", async (req, res) => {
+
+      const filter = { _id: ObjectId(req.params.id) };
+
+      const result = await allBlogsCollection.updateOne(filter, {
+          $set: {
+              status: req.body.status,
+          },
+      });
+      res.send(result);
+  });
+
+
+  
+     
 
 
     // POST notes
@@ -166,6 +204,25 @@ async function run() {
       const allNotes = await cursor.toArray();
       res.send(allNotes);
     });
+
+
+    // blog update status 
+    
+    app.put("/notesStatusUpdate/:id", async (req, res) => {
+
+      const filter = { _id: ObjectId(req.params.id) };
+
+      const result = await allNotesCollection.updateOne(filter, {
+          $set: {
+              status: req.body.status,
+          },
+      });
+      res.send(result);
+  });
+
+
+
+
 
 
 
@@ -261,6 +318,9 @@ async function run() {
           }
           res.json({admin: isAdmin});
     })
+
+
+
 
 
   } finally {
