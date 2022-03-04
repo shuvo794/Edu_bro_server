@@ -211,8 +211,7 @@ async function run() {
 
 
 
-
- // // get my note
+ // get my note
 
     app.get('/myQuestions/:email', async (req, res) => {
     const result = await allQuestionsCollection.find({ email: req.params.email }).toArray()
