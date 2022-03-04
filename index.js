@@ -141,7 +141,7 @@ async function run() {
 
 
 
-    // POST blogs
+    // POST Blogs
     app.post('/postBlogs', async (req, res) => {
       const allBlogs = req.body;
       const result = await allBlogsCollection.insertOne(allBlogs);
