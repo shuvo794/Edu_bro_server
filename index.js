@@ -72,7 +72,7 @@ async function run() {
 
     // get question  solve
 
-    app.get('/questionSolve/${id}', async (req, res) => {
+    app.get('/questionSolve/:id', async (req, res) => {
       const result = await questionSolveCollection.find({ questionId: req.params.id }).toArray()
       res.send(result)
     })
@@ -99,7 +99,6 @@ async function run() {
     // get single questions
     app.get('/question/:id', async (req, res) => {
       const id = req.params.id;
-      // @ts-ignore
       const result = await allQuestionsCollection.findOne({ _id: ObjectId(id) })
       res.json(result)
     })
