@@ -88,11 +88,35 @@ async function run() {
 
     });
 
+
+
+    // Get all questions api 
+    // app.get("/allQuestions", async (req, res) => {
+    //   const cursor = allQuestionsCollection.find({});
+    //   const allQuestions = await cursor.toArray();
+    //   res.send(allQuestions);
+    // });
+
+
+
+
     // Get all questions api 
     app.get("/allQuestions", async (req, res) => {
-      const cursor = allQuestionsCollection.find({});
-      const allQuestions = await cursor.toArray();
-      res.send(allQuestions);
+      const query = req.query;
+      Object.keys(query).forEach(key => {
+        if (!query[key])
+          delete query[key]
+      });
+      if (Object.keys(query).length) {
+        const cursor = allQuestionsCollection.find(query);
+        const allQuestions = await cursor.toArray();
+        res.send(allQuestions);
+      } else {
+        const cursor = allQuestionsCollection.find({});
+        const allQuestions = await cursor.toArray();
+        res.send(allQuestions);
+      }
+
     });
 
 
@@ -182,7 +206,6 @@ async function run() {
       });
       res.send(result);
     });
-
 
 
 
