@@ -25,6 +25,7 @@ async function run() {
     const database = client.db("Edu-Bro");
     const allQuestionsCollection = database.collection("allQuestions");
     const allBooksCollection = database.collection("allBooks");
+    const allSyllabusCollection = database.collection("allSyllabus");
     const allBlogsCollection = database.collection("allBlogs");
     const allNotesCollection = database.collection("allNotes");
     const userCollection = database.collection("user");
@@ -129,6 +130,26 @@ async function run() {
 
 
 
+
+
+    // blog update status 
+
+    app.put("/QuestionStatusUpdate/:id", async (req, res) => {
+
+      const filter = { _id: ObjectId(req.params.id) };
+
+      const result = await allQuestionsCollection.updateOne(filter, {
+        $set: {
+          status: req.body.status,
+        },
+      });
+      res.send(result);
+    });
+
+
+
+
+
     // POST Books
     app.post('/postBooks', async (req, res) => {
       const allBooks = req.body;
@@ -145,6 +166,39 @@ async function run() {
       const allBooks = await cursor.toArray();
       res.send(allBooks);
     });
+
+    // POST syllabus
+    app.post('/postSyllabus', async (req, res) => {
+      const allSyllabus = req.body;
+      const result = await allSyllabusCollection.insertOne(allSyllabus);
+      res.json(result);
+      console.log(result)
+
+    });
+
+
+    // Get all syllabus api 
+    app.get("/allSyllabus", async (req, res) => {
+      const cursor = allSyllabusCollection.find({});
+      const allSyllabus = await cursor.toArray();
+      res.send(allSyllabus);
+    });
+
+   // syllabus update status 
+    
+   app.put("/SyllabusStatusUpdate/:id", async (req, res) => {
+
+    const filter = { _id: ObjectId(req.params.id) };
+
+    const result = await allSyllabusCollection.updateOne(filter, {
+        $set: {
+            status: req.body.status,
+        },
+    });
+    res.send(result);
+});
+
+
 
 
     // blog update status 
@@ -305,6 +359,12 @@ async function run() {
 
     app.get('/myBooks/:email', async (req, res) => {
       const result = await allBooksCollection.find({ email: req.params.email }).toArray()
+      res.send(result)
+    })
+    // // get my syllabus
+
+    app.get('/mySyllabus/:email', async (req, res) => {
+      const result = await allSyllabusCollection.find({ email: req.params.email }).toArray()
       res.send(result)
     })
 
