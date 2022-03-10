@@ -129,6 +129,26 @@ async function run() {
 
 
 
+
+
+    // blog update status 
+
+    app.put("/QuestionStatusUpdate/:id", async (req, res) => {
+
+      const filter = { _id: ObjectId(req.params.id) };
+
+      const result = await allQuestionsCollection.updateOne(filter, {
+        $set: {
+          status: req.body.status,
+        },
+      });
+      res.send(result);
+    });
+
+
+
+
+
     // POST Books
     app.post('/postBooks', async (req, res) => {
       const allBooks = req.body;
