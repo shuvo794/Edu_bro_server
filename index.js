@@ -184,19 +184,19 @@ async function run() {
       res.send(allSyllabus);
     });
 
-   // syllabus update status 
-    
-   app.put("/SyllabusStatusUpdate/:id", async (req, res) => {
+    // syllabus update status 
 
-    const filter = { _id: ObjectId(req.params.id) };
+    app.put("/SyllabusStatusUpdate/:id", async (req, res) => {
 
-    const result = await allSyllabusCollection.updateOne(filter, {
+      const filter = { _id: ObjectId(req.params.id) };
+
+      const result = await allSyllabusCollection.updateOne(filter, {
         $set: {
-            status: req.body.status,
+          status: req.body.status,
         },
+      });
+      res.send(result);
     });
-    res.send(result);
-});
 
 
 
