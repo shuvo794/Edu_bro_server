@@ -341,6 +341,12 @@ async function run() {
       const result = await allBooksCollection.find({ email: req.params.email }).toArray()
       res.send(result)
     })
+    // // get my syllabus
+
+    app.get('/mySyllabus/:email', async (req, res) => {
+      const result = await allSyllabusCollection.find({ email: req.params.email }).toArray()
+      res.send(result)
+    })
 
 
     // // get my blogs
