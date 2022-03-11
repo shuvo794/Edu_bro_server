@@ -28,7 +28,9 @@ async function run() {
     const allSyllabusCollection = database.collection("allSyllabus");
     const allBlogsCollection = database.collection("allBlogs");
     const allNotesCollection = database.collection("allNotes");
+    const allLabsCollection = database.collection("allLabs");
     const userCollection = database.collection("user");
+    const reviewCollection = database.collection("review");
     const questionSolveCollection = database.collection("questionSolve");
     const BlogCommentCollection = database.collection("BlogComment");
 
@@ -215,6 +217,56 @@ async function run() {
       res.send(result);
     });
 
+
+
+
+    // Get single books
+
+    /*  app.get('/allBooks/:id', async (req, res) => {
+       const id = req.params.id;
+       const query = { _id: ObjectId(id) };
+       const blog = await allBooksCollection.findOne(query);
+       res.json(blog)
+ 
+     }) */
+
+    /* 
+        // // make review 
+        app.post('/addReview', async (req, res) => {
+          const allReview = req.body;
+          const result = await reviewCollection.insertOne(allReview);
+          res.json(result);
+          console.log(result)
+        })
+    
+        app.get('/review/:id', async (req, res) => {
+          const result = await reviewCollection.find({ bookId: req.params.id }).toArray()
+          res.send(result)
+        }) */
+
+
+
+
+
+    //get all Labs
+    app.get("/allLabs", async (req, res) => {
+      const cursor = allLabsCollection.find({});
+      const allLabs = await cursor.toArray();
+      res.send(allLabs);
+    });
+
+    //post Labs
+    app.post('/postLabs', async (req, res) => {
+      const allLabs = req.body;
+      const result = await allLabsCollection.insertOne(allLabs);
+      res.json(result);
+      console.log(result)
+
+    });
+    app.get('/myLabs/:email', async (req, res) => {
+      const result = await allLabsCollection.find({ email: req.params.email }).toArray()
+      res.send(result)
+    })
 
 
 
@@ -410,6 +462,7 @@ run().catch(console.dir);
 app.get("/", (req, res) => {
   res.send("Running The Edu-Bro Server");
 });
+
 
 app.listen(port, () => {
   console.log("Running server is port", port);
