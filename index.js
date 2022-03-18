@@ -104,23 +104,39 @@ async function run() {
 
 
     // Get all questions api 
+
     app.get("/allQuestions", async (req, res) => {
+      const page = req.query.page;
+      const size = parseInt(req.query.size);
       const query = req.query;
+      delete query.page
+      delete query.size
       Object.keys(query).forEach(key => {
         if (!query[key])
           delete query[key]
       });
+
       if (Object.keys(query).length) {
         const cursor = allQuestionsCollection.find(query);
-        const allQuestions = await cursor.toArray();
-        res.send(allQuestions);
+        const count = await cursor.count()
+        const allQuestions = await cursor.skip(page * size).limit(size).toArray()
+        res.json({
+          allQuestions, count
+        });
       } else {
         const cursor = allQuestionsCollection.find({});
-        const allQuestions = await cursor.toArray();
-        res.send(allQuestions);
+        const count = await cursor.count()
+        const allQuestions = await cursor.skip(page * size).limit(size).toArray()
+
+        res.json({
+          allQuestions, count
+        });
       }
 
     });
+
+
+
 
 
     // get single questions
