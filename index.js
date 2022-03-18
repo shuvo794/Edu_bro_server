@@ -25,6 +25,7 @@ async function run() {
     const database = client.db("Edu-Bro");
     const allQuestionsCollection = database.collection("allQuestions");
     const allBooksCollection = database.collection("allBooks");
+    const allSyllabusCollection = database.collection("allSyllabus");
     const allBlogsCollection = database.collection("allBlogs");
     const allNotesCollection = database.collection("allNotes");
     const allLabsCollection = database.collection("allLabs");
@@ -36,12 +37,12 @@ async function run() {
 
 
     // get question  solve
-    /* 
-        app.get('/getBlogComment', async (req, res) => {
-    
-          const result = await BlogCommentCollection.find({}).toArray()
-          res.send(result)
-        }); */
+
+    app.get('/getBlogComment', async (req, res) => {
+
+      const result = await BlogCommentCollection.find({}).toArray()
+      res.send(result)
+    })
 
 
 
@@ -74,7 +75,7 @@ async function run() {
 
     // get question  solve
 
-    app.get('/questionSolve/${id}', async (req, res) => {
+    app.get('/questionSolve/:id', async (req, res) => {
       const result = await questionSolveCollection.find({ questionId: req.params.id }).toArray()
       res.send(result)
     })
@@ -90,21 +91,64 @@ async function run() {
 
     });
 
+
+
+    // Get all questions api 
+    // app.get("/allQuestions", async (req, res) => {
+    //   const cursor = allQuestionsCollection.find({});
+    //   const allQuestions = await cursor.toArray();
+    //   res.send(allQuestions);
+    // });
+
+
+
+
     // Get all questions api 
     app.get("/allQuestions", async (req, res) => {
-      const cursor = allQuestionsCollection.find({});
-      const allQuestions = await cursor.toArray();
-      res.send(allQuestions);
+      const query = req.query;
+      Object.keys(query).forEach(key => {
+        if (!query[key])
+          delete query[key]
+      });
+      if (Object.keys(query).length) {
+        const cursor = allQuestionsCollection.find(query);
+        const allQuestions = await cursor.toArray();
+        res.send(allQuestions);
+      } else {
+        const cursor = allQuestionsCollection.find({});
+        const allQuestions = await cursor.toArray();
+        res.send(allQuestions);
+      }
+
     });
 
 
     // get single questions
     app.get('/question/:id', async (req, res) => {
       const id = req.params.id;
-      // @ts-ignore
       const result = await allQuestionsCollection.findOne({ _id: ObjectId(id) })
       res.json(result)
     })
+
+
+
+
+
+    // blog update status 
+
+    app.put("/QuestionStatusUpdate/:id", async (req, res) => {
+
+      const filter = { _id: ObjectId(req.params.id) };
+
+      const result = await allQuestionsCollection.updateOne(filter, {
+        $set: {
+          status: req.body.status,
+        },
+      });
+      res.send(result);
+    });
+
+
 
 
 
@@ -125,12 +169,56 @@ async function run() {
       res.send(allBooks);
     });
 
-    //get all review
-    app.get("/review", async (req, res) => {
-      const cursor = reviewCollection.find({});
-      const reviews = await cursor.toArray();
-      res.send(reviews);
+    // POST syllabus
+    app.post('/postSyllabus', async (req, res) => {
+      const allSyllabus = req.body;
+      const result = await allSyllabusCollection.insertOne(allSyllabus);
+      res.json(result);
+      console.log(result)
+
     });
+
+
+    // Get all syllabus api 
+    app.get("/allSyllabus", async (req, res) => {
+      const cursor = allSyllabusCollection.find({});
+      const allSyllabus = await cursor.toArray();
+      res.send(allSyllabus);
+    });
+
+    // syllabus update status 
+
+    app.put("/SyllabusStatusUpdate/:id", async (req, res) => {
+
+      const filter = { _id: ObjectId(req.params.id) };
+
+      const result = await allSyllabusCollection.updateOne(filter, {
+        $set: {
+          status: req.body.status,
+        },
+      });
+      res.send(result);
+    });
+
+
+
+
+    // blog update status 
+
+    app.put("/BookStatusUpdate/:id", async (req, res) => {
+
+      const filter = { _id: ObjectId(req.params.id) };
+
+      const result = await allBooksCollection.updateOne(filter, {
+        $set: {
+          status: req.body.status,
+        },
+      });
+      res.send(result);
+    });
+
+
+
 
     //add user review
     app.post("/review", async (req, res) => {
@@ -186,6 +274,8 @@ async function run() {
       res.send(allBlogs);
     });
 
+
+
     // get single blog
     app.get('/blog-details/:id', async (req, res) => {
       const id = req.params.id;
@@ -193,6 +283,24 @@ async function run() {
       const result = await allBlogsCollection.findOne({ _id: ObjectId(id) })
       res.json(result)
     })
+
+
+
+    // blog update status 
+
+    app.put("/BlogStatusUpdate/:id", async (req, res) => {
+
+      const filter = { _id: ObjectId(req.params.id) };
+
+      const result = await allBlogsCollection.updateOne(filter, {
+        $set: {
+          status: req.body.status,
+        },
+      });
+      res.send(result);
+    });
+
+
 
 
 
@@ -212,6 +320,20 @@ async function run() {
       res.send(allNotes);
     });
 
+
+    // blog update status 
+
+    app.put("/notesStatusUpdate/:id", async (req, res) => {
+
+      const filter = { _id: ObjectId(req.params.id) };
+
+      const result = await allNotesCollection.updateOne(filter, {
+        $set: {
+          status: req.body.status,
+        },
+      });
+      res.send(result);
+    });
 
 
     // add user 
@@ -257,8 +379,7 @@ async function run() {
 
 
 
-
-    // // get my note
+    // get my note
 
     app.get('/myQuestions/:email', async (req, res) => {
       const result = await allQuestionsCollection.find({ email: req.params.email }).toArray()
@@ -278,6 +399,12 @@ async function run() {
 
     app.get('/myBooks/:email', async (req, res) => {
       const result = await allBooksCollection.find({ email: req.params.email }).toArray()
+      res.send(result)
+    })
+    // // get my syllabus
+
+    app.get('/mySyllabus/:email', async (req, res) => {
+      const result = await allSyllabusCollection.find({ email: req.params.email }).toArray()
       res.send(result)
     })
 
@@ -308,6 +435,9 @@ async function run() {
       }
       res.json({ admin: isAdmin });
     })
+
+
+
 
 
   } finally {
