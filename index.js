@@ -236,29 +236,21 @@ async function run() {
 
 
 
-    // Get single books
+    //add user review
+    app.post("/review", async (req, res) => {
+      const review = req.body;
+      const result = await reviewCollection.insertOne(review);
+      console.log("review added", req.body);
+      console.log("successfully added review", result);
+      res.json(result);
+    });
 
-    /*  app.get('/allBooks/:id', async (req, res) => {
-       const id = req.params.id;
-       const query = { _id: ObjectId(id) };
-       const blog = await allBooksCollection.findOne(query);
-       res.json(blog)
- 
-     }) */
-
-    /* 
-        // // make review 
-        app.post('/addReview', async (req, res) => {
-          const allReview = req.body;
-          const result = await reviewCollection.insertOne(allReview);
-          res.json(result);
-          console.log(result)
-        })
-    
-        app.get('/review/:id', async (req, res) => {
-          const result = await reviewCollection.find({ bookId: req.params.id }).toArray()
-          res.send(result)
-        }) */
+    //get all review
+    app.get("/review", async (req, res) => {
+      const cursor = reviewCollection.find({});
+      const reviews = await cursor.toArray();
+      res.send(reviews);
+    });
 
 
 
@@ -266,10 +258,24 @@ async function run() {
 
     //get all Labs
     app.get("/allLabs", async (req, res) => {
-      const cursor = allLabsCollection.find({});
-      const allLabs = await cursor.toArray();
-      res.send(allLabs);
+
+      const cursor = allLabsCollection.find({})
+      const page = req.query.page;
+      const size = parseInt(req.query.size);
+      let allLabs;
+      const count = await cursor.count();
+      if (page) {
+        allLabs = await cursor.skip(page * size).limit(size).toArray()
+      } else {
+        allLabs = await cursor.toArray();
+      }
+      res.send({
+        count,
+        allLabs
+      });
     });
+
+
 
     //post Labs
     app.post('/postLabs', async (req, res) => {
@@ -279,6 +285,8 @@ async function run() {
       console.log(result)
 
     });
+
+
     app.get('/myLabs/:email', async (req, res) => {
       const result = await allLabsCollection.find({ email: req.params.email }).toArray()
       res.send(result)
@@ -371,6 +379,7 @@ async function run() {
       res.send(result);
       console.log(result)
     });
+
 
     // upsert for google login 
     app.put('/users', async (req, res) => {
