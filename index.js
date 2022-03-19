@@ -245,16 +245,37 @@ async function run() {
       res.json(result);
     });
 
+    //get all review
+    app.get("/review", async (req, res) => {
+      const cursor = reviewCollection.find({});
+      const reviews = await cursor.toArray();
+      res.send(reviews);
+    });
+
 
 
 
 
     //get all Labs
     app.get("/allLabs", async (req, res) => {
-      const cursor = allLabsCollection.find({});
-      const allLabs = await cursor.toArray();
-      res.send(allLabs);
+
+      const cursor = allLabsCollection.find({})
+      const page = req.query.page;
+      const size = parseInt(req.query.size);
+      let allLabs;
+      const count = await cursor.count();
+      if (page) {
+        allLabs = await cursor.skip(page * size).limit(size).toArray()
+      } else {
+        allLabs = await cursor.toArray();
+      }
+      res.send({
+        count,
+        allLabs
+      });
     });
+
+
 
     //post Labs
     app.post('/postLabs', async (req, res) => {
