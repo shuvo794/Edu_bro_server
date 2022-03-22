@@ -116,14 +116,16 @@ async function run() {
       });
 
       if (Object.keys(query).length) {
-        const cursor = allQuestionsCollection.find(query);
+        const cursor = allQuestionsCollection.find(query, status = "approved");
         const count = await cursor.count()
         const allQuestions = await cursor.skip(page * size).limit(size).toArray()
         res.json({
           allQuestions, count
         });
       } else {
-        const cursor = allQuestionsCollection.find({});
+        const cursor = allQuestionsCollection.find({
+          status: "approved"
+        });
         const count = await cursor.count()
         const allQuestions = await cursor.skip(page * size).limit(size).toArray()
 
