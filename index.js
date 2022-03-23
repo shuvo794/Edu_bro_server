@@ -2,15 +2,12 @@ const express = require("express");
 const { MongoClient } = require("mongodb");
 const ObjectId = require("mongodb").ObjectId;
 const cors = require("cors");
-const { cloudinary } = require("./Utility/Cloudinary");
 require("dotenv").config();
 
 const port = process.env.PORT || 5000;
 const app = express();
 app.use(cors());
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ limit: '50mb' }));
-
+app.use(express.json());
 
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.24hkl.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
@@ -54,9 +51,13 @@ async function run() {
       const BlogComment = req.body;
       const result = await BlogCommentCollection.insertOne(BlogComment);
       res.json(result);
-      //console.log(result)
+      console.log(result)
 
     });
+
+
+
+
 
 
 
@@ -66,7 +67,7 @@ async function run() {
       const questionSolve = req.body;
       const result = await questionSolveCollection.insertOne(questionSolve);
       res.json(result);
-      //console.log(result)
+      console.log(result)
 
     });
 
@@ -86,7 +87,7 @@ async function run() {
       const allQuestions = req.body;
       const result = await allQuestionsCollection.insertOne(allQuestions);
       res.json(result);
-      //console.log(result)
+      console.log(result)
 
     });
 
@@ -116,16 +117,14 @@ async function run() {
       });
 
       if (Object.keys(query).length) {
-        const cursor = allQuestionsCollection.find(query, status = "approved");
+        const cursor = allQuestionsCollection.find(query);
         const count = await cursor.count()
         const allQuestions = await cursor.skip(page * size).limit(size).toArray()
         res.json({
           allQuestions, count
         });
       } else {
-        const cursor = allQuestionsCollection.find({
-          status: "approved"
-        });
+        const cursor = allQuestionsCollection.find({});
         const count = await cursor.count()
         const allQuestions = await cursor.skip(page * size).limit(size).toArray()
 
@@ -174,7 +173,7 @@ async function run() {
       const allBooks = req.body;
       const result = await allBooksCollection.insertOne(allBooks);
       res.json(result);
-      //console.log(result)
+      console.log(result)
 
     });
 
@@ -186,25 +185,12 @@ async function run() {
       res.send(allBooks);
     });
 
-
-
-    app.delete('/deleteBook/:id', async (req, res) => {
-      const id = req.params.id;
-      const query = { _id: ObjectId(id) };
-      const result = await allBooksCollection.deleteOne(query);
-      res.json(result);
-
-
-    })
-
-
-
     // POST syllabus
     app.post('/postSyllabus', async (req, res) => {
       const allSyllabus = req.body;
       const result = await allSyllabusCollection.insertOne(allSyllabus);
       res.json(result);
-      //console.log(result)
+      console.log(result)
 
     });
 
@@ -229,16 +215,6 @@ async function run() {
       });
       res.send(result);
     });
-
-
-    // Delete Syllabus
-    app.delete('/deleteSyllabus/:id', async (req, res) => {
-      const id = req.params.id;
-      const query = { _id: ObjectId(id) };
-      const result = await allSyllabusCollection.deleteOne(query);
-      res.json(result);
-    })
-
 
 
 
@@ -306,7 +282,7 @@ async function run() {
       const allLabs = req.body;
       const result = await allLabsCollection.insertOne(allLabs);
       res.json(result);
-      //console.log(result)
+      console.log(result)
 
     });
 
@@ -316,38 +292,14 @@ async function run() {
       res.send(result)
     })
 
-    app.delete('/deleteLab/:id', async (req, res) => {
-      const id = req.params.id;
-      const query = { _id: ObjectId(id) };
-      const result = await allLabsCollection.deleteOne(query);
-      res.json(result);
-
-
-    })
-
-
-
 
 
     // POST blogs
     app.post('/postBlogs', async (req, res) => {
-      const blogInfo = req.body;
-      const blogImg = blogInfo.blogImg;
-      try {
-        const response = await cloudinary.uploader.upload(blogImg, {
-          upload_preset: "Blogs"
-        })
-        console.log(response.url);
-        blogInfo.blogImg = response.url;
-        const result = await allBlogsCollection.insertOne(blogInfo);
-        res.json(result);
-
-      } catch (error) {
-        console.log(error);
-      }
-      // console.log(blogInfo, "test");
-      // const allBlogs = req.body;
-
+      const allBlogs = req.body;
+      const result = await allBlogsCollection.insertOne(allBlogs);
+      res.json(result);
+      console.log(result)
 
     });
 
@@ -358,17 +310,6 @@ async function run() {
       const allBlogs = await cursor.toArray();
       res.send(allBlogs);
     });
-
-
-    app.delete('/deleteBlog/:id', async (req, res) => {
-      const id = req.params.id;
-      const query = { _id: ObjectId(id) };
-      const result = await allBlogsCollection.deleteOne(query);
-      res.json(result);
-
-
-    })
-
 
 
 
@@ -405,7 +346,7 @@ async function run() {
       const allNotes = req.body;
       const result = await allNotesCollection.insertOne(allNotes);
       res.json(result);
-      //console.log(result)
+      console.log(result)
 
     });
 
@@ -431,21 +372,12 @@ async function run() {
       res.send(result);
     });
 
-    // Delete Note 
-    app.delete('/deleteNote/:id', async (req, res) => {
-      const id = req.params.id;
-      const query = { _id: ObjectId(id) };
-      const result = await allNotesCollection.deleteOne(query);
-      res.json(result);
-    })
-
 
     // add user 
     app.post("/users", async (req, res) => {
-      
       const result = await userCollection.insertOne(req.body);
       res.send(result);
-      //console.log(result)
+      console.log(result)
     });
 
 
@@ -490,17 +422,6 @@ async function run() {
       const result = await allQuestionsCollection.find({ email: req.params.email }).toArray()
       res.send(result)
     })
-
-
-    // Delete questions 
-    app.delete('/deleteQuestion/:id', async (req, res) => {
-      const id = req.params.id;
-      const query = { _id: ObjectId(id) };
-      const result = await allQuestionsCollection.deleteOne(query);
-      res.json(result);
-    })
-
-
 
 
     // // get my note
