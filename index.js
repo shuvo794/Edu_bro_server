@@ -2,12 +2,15 @@ const express = require("express");
 const { MongoClient } = require("mongodb");
 const ObjectId = require("mongodb").ObjectId;
 const cors = require("cors");
+const { cloudinary } = require("./Utility/Cloudinary");
 require("dotenv").config();
 
 const port = process.env.PORT || 5000;
 const app = express();
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb' }));
+
 
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.24hkl.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
@@ -28,7 +31,9 @@ async function run() {
     const allSyllabusCollection = database.collection("allSyllabus");
     const allBlogsCollection = database.collection("allBlogs");
     const allNotesCollection = database.collection("allNotes");
+    const allLabsCollection = database.collection("allLabs");
     const userCollection = database.collection("user");
+    const reviewCollection = database.collection("review");
     const questionSolveCollection = database.collection("questionSolve");
     const BlogCommentCollection = database.collection("BlogComment");
 
@@ -49,13 +54,9 @@ async function run() {
       const BlogComment = req.body;
       const result = await BlogCommentCollection.insertOne(BlogComment);
       res.json(result);
-      console.log(result)
+      //console.log(result)
 
     });
-
-
-
-
 
 
 
@@ -65,7 +66,7 @@ async function run() {
       const questionSolve = req.body;
       const result = await questionSolveCollection.insertOne(questionSolve);
       res.json(result);
-      console.log(result)
+      //console.log(result)
 
     });
 
@@ -85,7 +86,7 @@ async function run() {
       const allQuestions = req.body;
       const result = await allQuestionsCollection.insertOne(allQuestions);
       res.json(result);
-      console.log(result)
+      //console.log(result)
 
     });
 
@@ -102,23 +103,41 @@ async function run() {
 
 
     // Get all questions api 
+
     app.get("/allQuestions", async (req, res) => {
+      const page = req.query.page;
+      const size = parseInt(req.query.size);
       const query = req.query;
+      delete query.page
+      delete query.size
       Object.keys(query).forEach(key => {
         if (!query[key])
           delete query[key]
       });
+
       if (Object.keys(query).length) {
-        const cursor = allQuestionsCollection.find(query);
-        const allQuestions = await cursor.toArray();
-        res.send(allQuestions);
+        const cursor = allQuestionsCollection.find(query, status = "approved");
+        const count = await cursor.count()
+        const allQuestions = await cursor.skip(page * size).limit(size).toArray()
+        res.json({
+          allQuestions, count
+        });
       } else {
-        const cursor = allQuestionsCollection.find({});
-        const allQuestions = await cursor.toArray();
-        res.send(allQuestions);
+        const cursor = allQuestionsCollection.find({
+          status: "approved"
+        });
+        const count = await cursor.count()
+        const allQuestions = await cursor.skip(page * size).limit(size).toArray()
+
+        res.json({
+          allQuestions, count
+        });
       }
 
     });
+
+
+
 
 
     // get single questions
@@ -155,7 +174,7 @@ async function run() {
       const allBooks = req.body;
       const result = await allBooksCollection.insertOne(allBooks);
       res.json(result);
-      console.log(result)
+      //console.log(result)
 
     });
 
@@ -167,12 +186,25 @@ async function run() {
       res.send(allBooks);
     });
 
+
+
+    app.delete('/deleteBook/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await allBooksCollection.deleteOne(query);
+      res.json(result);
+
+
+    })
+
+
+
     // POST syllabus
     app.post('/postSyllabus', async (req, res) => {
       const allSyllabus = req.body;
       const result = await allSyllabusCollection.insertOne(allSyllabus);
       res.json(result);
-      console.log(result)
+      //console.log(result)
 
     });
 
@@ -199,6 +231,16 @@ async function run() {
     });
 
 
+    // Delete Syllabus
+    app.delete('/deleteSyllabus/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await allSyllabusCollection.deleteOne(query);
+      res.json(result);
+    })
+
+
+
 
 
     // blog update status 
@@ -218,12 +260,94 @@ async function run() {
 
 
 
-    // POST Blogs
-    app.post('/postBlogs', async (req, res) => {
-      const allBlogs = req.body;
-      const result = await allBlogsCollection.insertOne(allBlogs);
+    //add user review
+    app.post("/review", async (req, res) => {
+      const review = req.body;
+      const result = await reviewCollection.insertOne(review);
+      console.log("review added", req.body);
+      console.log("successfully added review", result);
       res.json(result);
-      console.log(result)
+    });
+
+    //get all review
+    app.get("/review", async (req, res) => {
+      const cursor = reviewCollection.find({});
+      const reviews = await cursor.toArray();
+      res.send(reviews);
+    });
+
+
+
+
+
+    //get all Labs
+    app.get("/allLabs", async (req, res) => {
+
+      const cursor = allLabsCollection.find({})
+      const page = req.query.page;
+      const size = parseInt(req.query.size);
+      let allLabs;
+      const count = await cursor.count();
+      if (page) {
+        allLabs = await cursor.skip(page * size).limit(size).toArray()
+      } else {
+        allLabs = await cursor.toArray();
+      }
+      res.send({
+        count,
+        allLabs
+      });
+    });
+
+
+
+    //post Labs
+    app.post('/postLabs', async (req, res) => {
+      const allLabs = req.body;
+      const result = await allLabsCollection.insertOne(allLabs);
+      res.json(result);
+      //console.log(result)
+
+    });
+
+
+    app.get('/myLabs/:email', async (req, res) => {
+      const result = await allLabsCollection.find({ email: req.params.email }).toArray()
+      res.send(result)
+    })
+
+    app.delete('/deleteLab/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await allLabsCollection.deleteOne(query);
+      res.json(result);
+
+
+    })
+
+
+
+
+
+    // POST blogs
+    app.post('/postBlogs', async (req, res) => {
+      const blogInfo = req.body;
+      const blogImg = blogInfo.blogImg;
+      try {
+        const response = await cloudinary.uploader.upload(blogImg, {
+          upload_preset: "Blogs"
+        })
+        console.log(response.url);
+        blogInfo.blogImg = response.url;
+        const result = await allBlogsCollection.insertOne(blogInfo);
+        res.json(result);
+
+      } catch (error) {
+        console.log(error);
+      }
+      // console.log(blogInfo, "test");
+      // const allBlogs = req.body;
+
 
     });
 
@@ -234,6 +358,17 @@ async function run() {
       const allBlogs = await cursor.toArray();
       res.send(allBlogs);
     });
+
+
+    app.delete('/deleteBlog/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await allBlogsCollection.deleteOne(query);
+      res.json(result);
+
+
+    })
+
 
 
 
@@ -270,7 +405,7 @@ async function run() {
       const allNotes = req.body;
       const result = await allNotesCollection.insertOne(allNotes);
       res.json(result);
-      console.log(result)
+      //console.log(result)
 
     });
 
@@ -296,13 +431,23 @@ async function run() {
       res.send(result);
     });
 
+    // Delete Note 
+    app.delete('/deleteNote/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await allNotesCollection.deleteOne(query);
+      res.json(result);
+    })
+
 
     // add user 
     app.post("/users", async (req, res) => {
+      
       const result = await userCollection.insertOne(req.body);
       res.send(result);
-      console.log(result)
+      //console.log(result)
     });
+
 
     // upsert for google login 
     app.put('/users', async (req, res) => {
@@ -345,6 +490,17 @@ async function run() {
       const result = await allQuestionsCollection.find({ email: req.params.email }).toArray()
       res.send(result)
     })
+
+
+    // Delete questions 
+    app.delete('/deleteQuestion/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await allQuestionsCollection.deleteOne(query);
+      res.json(result);
+    })
+
+
 
 
     // // get my note
@@ -410,6 +566,7 @@ run().catch(console.dir);
 app.get("/", (req, res) => {
   res.send("Running The Edu-Bro Server");
 });
+
 
 app.listen(port, () => {
   console.log("Running server is port", port);
